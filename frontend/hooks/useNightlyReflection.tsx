@@ -20,6 +20,7 @@ type ReflectionData = {
 };
 
 // Optimized nightly reflection hook
+// Optimized nightly reflection hook
 export const useNightlyReflection = () => {
   const { address } = useAccount();
   const chainId = useChainId();
@@ -367,5 +368,6 @@ export const useNightlyReflection = () => {
     isDeployed: !!contractAddress,
   };
 };
+
 
 
