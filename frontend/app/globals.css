@@ -424,3 +424,6 @@ nextjs-portal {
   color: var(--text-muted);
   font-weight: 500;
 }
+/* Improved spacing utilities */
+.spacing-util { margin: 1rem; }
+
