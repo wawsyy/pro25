@@ -2,7 +2,7 @@
 
 A fully homomorphic encryption (FHE) enabled dApp for storing encrypted nightly reflection entries on the blockchain.
 
-## Features
+## Enhanced Features
 
 - **Encrypted Storage**: Store your nightly reflections (stress level, achievement, mindset adjustment) with FHE encryption
 - **Privacy First**: Your reflection data is encrypted and only you can decrypt it
@@ -73,13 +73,13 @@ A fully homomorphic encryption (FHE) enabled dApp for storing encrypted nightly 
 ```
 pro25/
 ├── contracts/              # Smart contract source files
-│   └── NightlyReflection.sol
+�?  └── NightlyReflection.sol
 ├── deploy/                 # Deployment scripts
 ├── frontend/               # Next.js frontend application
-│   ├── app/               # Next.js app router pages
-│   ├── components/        # React components
-│   ├── hooks/             # Custom React hooks
-│   └── fhevm/            # FHEVM integration
+�?  ├── app/               # Next.js app router pages
+�?  ├── components/        # React components
+�?  ├── hooks/             # Custom React hooks
+�?  └── fhevm/            # FHEVM integration
 ├── test/                  # Test files
 ├── tasks/                 # Hardhat custom tasks
 └── hardhat.config.ts     # Hardhat configuration
@@ -157,4 +157,5 @@ BSD-3-Clause-Clear
 ---
 
 **Built with ❤️ using Zama FHEVM**
+
 
