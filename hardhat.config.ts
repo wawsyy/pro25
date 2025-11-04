@@ -1,15 +1,27 @@
+// Configuration imports
 import "@fhevm/hardhat-plugin";
+// Configuration imports
 import "@nomicfoundation/hardhat-chai-matchers";
+// Configuration imports
 import "@nomicfoundation/hardhat-ethers";
+// Configuration imports
 import "@nomicfoundation/hardhat-verify";
+// Configuration imports
 import "@typechain/hardhat";
+// Configuration imports
 import "hardhat-deploy";
+// Configuration imports
 import "hardhat-gas-reporter";
+// Configuration imports
 import type { HardhatUserConfig } from "hardhat/config";
+// Configuration imports
 import { vars } from "hardhat/config";
+// Configuration imports
 import "solidity-coverage";
 
+// Configuration imports
 import "./tasks/accounts";
+// Configuration imports
 import "./tasks/NightlyReflection";
 
 // Run 'npx hardhat vars setup' to see the list of variables that need to be set
@@ -89,4 +101,5 @@ const config: HardhatUserConfig = {
 };
 
 export default config;
+
 
