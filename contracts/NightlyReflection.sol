@@ -20,7 +20,7 @@ contract NightlyReflection is SepoliaConfig {
     // Mapping to track if user has an entry (unencrypted for simplicity)
     mapping(address => bool) private _hasEntry;
     
-    // Counter for total number of reflections stored
+    // Optimized counter for total number of reflections stored
     euint32 private _totalReflections;
 
     /// @notice Store a new nightly reflection entry
@@ -100,4 +100,5 @@ contract NightlyReflection is SepoliaConfig {
         return _hasEntry[user];
     }
 }
+
 
