@@ -75,13 +75,14 @@ export const useNightlyReflection = () => {
     return (
       contractAddress &&
       fhevmInstance &&
-      signer &&
+      provider &&
+      address &&
       !isRefreshing &&
       !isDecrypting &&
       reflection &&
       (reflection.stressLevel !== undefined || reflection.achievement !== undefined)
     );
-  }, [contractAddress, fhevmInstance, signer, isRefreshing, isDecrypting, reflection]);
+  }, [contractAddress, fhevmInstance, provider, address, isRefreshing, isDecrypting, reflection]);
 
   const refreshReflection = useCallback(async () => {
     if (!contractAddress || !publicClient || !address || isRefreshing) return;
@@ -175,7 +176,7 @@ export const useNightlyReflection = () => {
   }, [contractAddress, publicClient, address, isRefreshing]);
 
   const decryptReflection = useCallback(async () => {
-    if (!contractAddress || !fhevmInstance || !signer || isDecrypting || !reflection) return;
+    if (!contractAddress || !fhevmInstance || !provider || !address || isDecrypting || !reflection) return;
 
     setIsDecrypting(true);
     setMessage("Decrypting reflection...");
@@ -255,10 +256,10 @@ export const useNightlyReflection = () => {
     } finally {
       setIsDecrypting(false);
     }
-  }, [contractAddress, fhevmInstance, signer, reflection, isDecrypting, fhevmDecryptionSignatureStorage]);
+  }, [contractAddress, fhevmInstance, provider, address, signer, reflection, isDecrypting, fhevmDecryptionSignatureStorage]);
 
   const addReflection = useCallback(async (stress: number, achievement: number, mindset: number) => {
-    if (!contractAddress || !fhevmInstance || !signer || isAdding) return;
+    if (!contractAddress || !fhevmInstance || !provider || !address || isAdding) return;
 
     setIsAdding(true);
     setMessage("Adding reflection...");
@@ -339,7 +340,7 @@ export const useNightlyReflection = () => {
     } finally {
       setIsAdding(false);
     }
-  }, [contractAddress, fhevmInstance, signer, address, isAdding, refreshReflection]);
+  }, [contractAddress, fhevmInstance, provider, address, signer, isAdding, refreshReflection]);
 
   // Auto refresh on mount - only once when contract and address are available
   const hasRefreshedRef = useRef<string | null>(null);
