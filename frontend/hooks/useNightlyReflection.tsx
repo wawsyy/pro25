@@ -8,7 +8,6 @@ import { useInMemoryStorage } from "./useInMemoryStorage";
 import { FhevmDecryptionSignature } from "@/fhevm/FhevmDecryptionSignature";
 import { NightlyReflectionAddresses } from "@/abi/NightlyReflectionAddresses";
 import { NightlyReflectionABI } from "@/abi/NightlyReflectionABI";
-import { FhevmType } from "@fhevm/hardhat-plugin";
 
 type ReflectionData = {
   stressLevel?: string; // Handle as hex string for userDecrypt
@@ -19,7 +18,6 @@ type ReflectionData = {
   decryptedMindset?: number;
 };
 
-// Optimized nightly reflection hook
 // Optimized nightly reflection hook
 export const useNightlyReflection = () => {
   const { address } = useAccount();
