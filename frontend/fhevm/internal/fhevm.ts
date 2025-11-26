@@ -44,12 +44,23 @@ const fhevmInitSDK: FhevmInitSDKType = async (
   if (!isFhevmWindowType(window, console.log)) {
     throw new Error("window.relayerSDK is not available");
   }
-  const result = await window.relayerSDK.initSDK(options);
-  window.relayerSDK.__initialized__ = result;
-  if (!result) {
-    throw new Error("window.relayerSDK.initSDK failed.");
+  try {
+    const result = await window.relayerSDK.initSDK(options);
+    window.relayerSDK.__initialized__ = result;
+    if (!result) {
+      throw new Error("window.relayerSDK.initSDK failed.");
+    }
+    return true;
+  } catch (error: any) {
+    // Improve error message for WASM initialization failures
+    const errorMessage = error?.message || String(error);
+    if (errorMessage.includes("unwrap_throw") || errorMessage.includes("Err")) {
+      throw new Error(
+        `FHEVM WASM module initialization failed. This is often due to the Relayer service being unavailable or network connectivity issues. Please try again later. Original error: ${errorMessage}`
+      );
+    }
+    throw error;
   }
-  return true;
 };
 
 function checkIsAddress(a: unknown): a is `0x${string}` {
@@ -302,7 +313,23 @@ export const createFhevmInstance = async (parameters: {
   // notify that state === "creating"
   notify("creating");
 
-  const instance = await relayerSDK.createInstance(config);
+  let instance: FhevmInstance;
+  try {
+    instance = await relayerSDK.createInstance(config);
+  } catch (error: any) {
+    const errorMessage = error?.message || String(error);
+    if (
+      errorMessage.includes("Relayer didn't response") ||
+      errorMessage.includes("Bad JSON") ||
+      errorMessage.includes("CONNECTION_CLOSED") ||
+      errorMessage.includes("Failed to fetch")
+    ) {
+      throw new Error(
+        `Unable to connect to FHEVM Relayer service. The Relayer server at relayer.testnet.zama.cloud may be temporarily unavailable or unreachable. Please check your network connection and try again later. Original error: ${errorMessage}`
+      );
+    }
+    throw error;
+  }
 
   // Save the key even if aborted
   await publicKeyStorageSet(
