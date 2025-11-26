@@ -10,7 +10,7 @@ import { useNightlyReflection } from "@/hooks/useNightlyReflection";
 export const NightlyReflectionApp = () => {
   const { isConnected } = useAccount();
   const [mounted, setMounted] = useState(false);
-  const { contractAddress } = useNightlyReflection();
+  const { contractAddress, fhevmStatus, fhevmError } = useNightlyReflection();
 
   // Prevent hydration mismatch by only rendering after mount
   useEffect(() => {
@@ -80,6 +80,36 @@ export const NightlyReflectionApp = () => {
             <h3 className="text-lg font-semibold text-yellow-800 mb-1">Contract Not Deployed</h3>
             <p className="text-yellow-700 text-sm">
               The Nightly Reflection contract is not deployed on this network. Please deploy the contract first or switch to a network where it's deployed.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Warning if FHEVM has errors */}
+      {fhevmStatus === "error" && fhevmError && (
+        <div className="mb-8 modern-card bg-orange-50 border-orange-200">
+          <div>
+            <h3 className="text-lg font-semibold text-orange-800 mb-1">FHEVM Initialization Warning</h3>
+            <p className="text-orange-700 text-sm mb-2">
+              The FHEVM encryption service is currently unavailable. This may be temporary.
+            </p>
+            <p className="text-orange-600 text-xs">
+              Error: {fhevmError.message || "Unknown error"}
+            </p>
+            <p className="text-orange-600 text-xs mt-2">
+              You can still view existing reflections, but adding new encrypted reflections may not work until the service is restored.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Loading indicator for FHEVM */}
+      {fhevmStatus === "loading" && (
+        <div className="mb-8 modern-card bg-blue-50 border-blue-200">
+          <div>
+            <h3 className="text-lg font-semibold text-blue-800 mb-1">Initializing Encryption Service</h3>
+            <p className="text-blue-700 text-sm">
+              Please wait while we set up the FHEVM encryption service...
             </p>
           </div>
         </div>

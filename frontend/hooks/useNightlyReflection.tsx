@@ -62,8 +62,7 @@ export const useNightlyReflection = () => {
   useEffect(() => {
     if (fhevmStatus === "error" && fhevmError) {
       console.warn("FHEVM initialization error:", fhevmError);
-      console.warn("This may be due to missing Cross-Origin-Opener-Policy headers required by FHEVM.");
-      console.warn("FHEVM requires COOP headers, but Base Account SDK (RainbowKit) requires them to be absent.");
+      console.warn("FHEVM Relayer may be temporarily unavailable. Please try again later.");
     }
   }, [fhevmStatus, fhevmError]);
 
@@ -365,6 +364,8 @@ export const useNightlyReflection = () => {
     message,
     contractAddress,
     isDeployed: !!contractAddress,
+    fhevmStatus,
+    fhevmError,
   };
 };
 
