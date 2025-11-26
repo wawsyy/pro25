@@ -28,11 +28,37 @@ export class RelayerSDKLoader {
     }
 
     if ("relayerSDK" in window) {
-      if (!isFhevmRelayerSDKType(window.relayerSDK, this._trace)) {
-        console.log("[RelayerSDKLoader] window.relayerSDK === undefined");
-        throw new Error("RelayerSDKLoader: Unable to load FHEVM Relayer SDK");
+      if (isFhevmWindowType(window, this._trace)) {
+        return Promise.resolve();
       }
-      return Promise.resolve();
+      // relayerSDK exists but not ready yet, wait for it
+      console.log("[RelayerSDKLoader] relayerSDK property exists but not ready, waiting...");
+      return new Promise((resolve, reject) => {
+        const maxWaitTime = 10000; // 10 seconds
+        const checkInterval = 100; // Check every 100ms
+        const startTime = Date.now();
+        
+        const checkRelayerSDK = () => {
+          if (isFhevmWindowType(window, this._trace)) {
+            console.log("[RelayerSDKLoader] relayerSDK is now ready!");
+            resolve();
+            return;
+          }
+          
+          if (Date.now() - startTime > maxWaitTime) {
+            reject(
+              new Error(
+                "RelayerSDKLoader: window.relayerSDK exists but did not become valid within 10 seconds. This may be due to network issues or the Relayer service being temporarily unavailable."
+              )
+            );
+            return;
+          }
+          
+          setTimeout(checkRelayerSDK, checkInterval);
+        };
+        
+        checkRelayerSDK();
+      });
     }
 
     return new Promise((resolve, reject) => {
@@ -40,14 +66,34 @@ export class RelayerSDKLoader {
         `script[src="${SDK_CDN_URL}"]`
       );
       if (existingScript) {
-        if (!isFhevmWindowType(window, this._trace)) {
-          reject(
-            new Error(
-              "RelayerSDKLoader: window object does not contain a valid relayerSDK object."
-            )
-          );
-        }
-        resolve();
+        // Script already loaded, wait for relayerSDK to be available
+        console.log("[RelayerSDKLoader] script already exists, waiting for relayerSDK...");
+        const maxWaitTime = 10000; // 10 seconds
+        const checkInterval = 100; // Check every 100ms
+        const startTime = Date.now();
+        
+        const checkRelayerSDK = () => {
+          if (isFhevmWindowType(window, this._trace)) {
+            console.log("[RelayerSDKLoader] relayerSDK is now available!");
+            resolve();
+            return;
+          }
+          
+          if (Date.now() - startTime > maxWaitTime) {
+            reject(
+              new Error(
+                "RelayerSDKLoader: window object does not contain a valid relayerSDK object. The script is loaded but the SDK did not initialize. This may be due to network issues or the Relayer service being temporarily unavailable."
+              )
+            );
+            return;
+          }
+          
+          // Continue checking
+          setTimeout(checkRelayerSDK, checkInterval);
+        };
+        
+        // Start checking immediately
+        checkRelayerSDK();
         return;
       }
 
@@ -57,15 +103,35 @@ export class RelayerSDKLoader {
       script.async = true;
 
       script.onload = () => {
-        if (!isFhevmWindowType(window, this._trace)) {
-          console.log("[RelayerSDKLoader] script onload FAILED...");
-          reject(
-            new Error(
-              `RelayerSDKLoader: Relayer SDK script has been successfully loaded from ${SDK_CDN_URL}, however, the window.relayerSDK object is invalid.`
-            )
-          );
-        }
-        resolve();
+        console.log("[RelayerSDKLoader] script onload, waiting for relayerSDK initialization...");
+        // Wait for relayerSDK to be available (it may take time to initialize)
+        const maxWaitTime = 10000; // 10 seconds
+        const checkInterval = 100; // Check every 100ms
+        const startTime = Date.now();
+        
+        const checkRelayerSDK = () => {
+          if (isFhevmWindowType(window, this._trace)) {
+            console.log("[RelayerSDKLoader] relayerSDK is now available!");
+            resolve();
+            return;
+          }
+          
+          if (Date.now() - startTime > maxWaitTime) {
+            console.log("[RelayerSDKLoader] script onload FAILED - timeout waiting for relayerSDK");
+            reject(
+              new Error(
+                `RelayerSDKLoader: Relayer SDK script has been successfully loaded from ${SDK_CDN_URL}, however, the window.relayerSDK object did not become available within ${maxWaitTime}ms. This may be due to network issues or the Relayer service being temporarily unavailable.`
+              )
+            );
+            return;
+          }
+          
+          // Continue checking
+          setTimeout(checkRelayerSDK, checkInterval);
+        };
+        
+        // Start checking after a short delay
+        setTimeout(checkRelayerSDK, checkInterval);
       };
 
       script.onerror = () => {
